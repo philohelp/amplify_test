@@ -1,0 +1,40 @@
+type TestTalk
+  @model(subscriptions: null)
+  @auth(
+    rules: [
+      { allow: owner }
+      { allow: private, operations: [read] }
+      { allow: public, operations: [read] }
+    ]
+  ) {
+  id: ID!
+  clientId: ID
+  name: String!
+  description: String!
+}
+
+type TestComment
+  @model
+  @auth(
+    rules: [
+      {
+        allow: owner
+        ownerField: "createdBy"
+        operations: [create, update, delete]
+      }
+      { allow: private, operations: [read] }
+    ]
+  ) {
+  id: ID!
+  message: String
+  createdBy: String
+}
+
+type Subscription {
+  onCreateTestTalk(name: String): TestTalk
+    @aws_subscribe(mutations: ["createTestTalk"])
+  onUpdateTestTalk(id: ID, name: String, description: String): TestTalk
+    @aws_subscribe(mutations: ["updateTestTalk"])
+  onDeleteTestTalk(id: ID): TestTalk
+    @aws_subscribe(mutations: ["deleteTestTalk"])
+}

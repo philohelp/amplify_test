@@ -1,25 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import { Auth } from "aws-amplify";
 
-function App() {
+import SecurePart from "./secure";
+import Crud from "./edit_data";
+
+const App = () => {
+  useEffect(function async() {
+    getData();
+  }, []);
+
+  const getData = async () => {
+    const user = await Auth.currentAuthenticatedUser();
+    console.log("user:", user);
+    console.log("user info:", user.signInUserSession.idToken.payload);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ margin: 100, color: "green" }}>
+      This is the public part
+      <Crud />
+      <div style={{ marginTop: 100, color: "red" }}>
+        <SecurePart />
+      </div>
     </div>
   );
-}
+};
 
 export default App;
